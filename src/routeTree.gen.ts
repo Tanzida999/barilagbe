@@ -19,6 +19,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as OwnersRegisterRouteImport } from './routes/owners.register'
+import { Route as ApplyPropertyIdRouteImport } from './routes/apply.$propertyId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -70,30 +73,51 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PropertiesIdRoute = PropertiesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PropertiesRoute,
+} as any)
+const OwnersRegisterRoute = OwnersRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => OwnersRoute,
+} as any)
+const ApplyPropertyIdRoute = ApplyPropertyIdRouteImport.update({
+  id: '/apply/$propertyId',
+  path: '/apply/$propertyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/owners': typeof OwnersRoute
+  '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/properties': typeof PropertiesRoute
+  '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/owners/register': typeof OwnersRegisterRoute
+  '/properties/$id': typeof PropertiesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/owners': typeof OwnersRoute
+  '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/properties': typeof PropertiesRoute
+  '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/owners/register': typeof OwnersRegisterRoute
+  '/properties/$id': typeof PropertiesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,12 +125,15 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/login': typeof LoginRoute
-  '/owners': typeof OwnersRoute
+  '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
-  '/properties': typeof PropertiesRoute
+  '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/owners/register': typeof OwnersRegisterRoute
+  '/properties/$id': typeof PropertiesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +148,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/services'
     | '/terms'
+    | '/apply/$propertyId'
+    | '/owners/register'
+    | '/properties/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +163,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/services'
     | '/terms'
+    | '/apply/$propertyId'
+    | '/owners/register'
+    | '/properties/$id'
   id:
     | '__root__'
     | '/'
@@ -145,6 +178,9 @@ export interface FileRouteTypes {
     | '/register'
     | '/services'
     | '/terms'
+    | '/apply/$propertyId'
+    | '/owners/register'
+    | '/properties/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,12 +188,13 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
   LoginRoute: typeof LoginRoute
-  OwnersRoute: typeof OwnersRoute
+  OwnersRoute: typeof OwnersRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
-  PropertiesRoute: typeof PropertiesRoute
+  PropertiesRoute: typeof PropertiesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
+  ApplyPropertyIdRoute: typeof ApplyPropertyIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,20 +269,65 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/properties/$id': {
+      id: '/properties/$id'
+      path: '/$id'
+      fullPath: '/properties/$id'
+      preLoaderRoute: typeof PropertiesIdRouteImport
+      parentRoute: typeof PropertiesRoute
+    }
+    '/owners/register': {
+      id: '/owners/register'
+      path: '/register'
+      fullPath: '/owners/register'
+      preLoaderRoute: typeof OwnersRegisterRouteImport
+      parentRoute: typeof OwnersRoute
+    }
+    '/apply/$propertyId': {
+      id: '/apply/$propertyId'
+      path: '/apply/$propertyId'
+      fullPath: '/apply/$propertyId'
+      preLoaderRoute: typeof ApplyPropertyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
+
+interface OwnersRouteChildren {
+  OwnersRegisterRoute: typeof OwnersRegisterRoute
+}
+
+const OwnersRouteChildren: OwnersRouteChildren = {
+  OwnersRegisterRoute: OwnersRegisterRoute,
+}
+
+const OwnersRouteWithChildren =
+  OwnersRoute._addFileChildren(OwnersRouteChildren)
+
+interface PropertiesRouteChildren {
+  PropertiesIdRoute: typeof PropertiesIdRoute
+}
+
+const PropertiesRouteChildren: PropertiesRouteChildren = {
+  PropertiesIdRoute: PropertiesIdRoute,
+}
+
+const PropertiesRouteWithChildren = PropertiesRoute._addFileChildren(
+  PropertiesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
   LoginRoute: LoginRoute,
-  OwnersRoute: OwnersRoute,
+  OwnersRoute: OwnersRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
-  PropertiesRoute: PropertiesRoute,
+  PropertiesRoute: PropertiesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
+  ApplyPropertyIdRoute: ApplyPropertyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
