@@ -1,12 +1,12 @@
-import { createFileRoute, Link, useNavigate, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PageShell, Crumbs } from "@/components/site-chrome";
 import { BookVisitModal } from "@/components/book-visit-modal";
-import { getProperty, getOwner, bn } from "@/lib/mock-data";
+import { getProperty, getOwner, bn, mapEmbedUrl, mapLinkUrl } from "@/lib/mock-data";
 import { useAppStore } from "@/lib/store";
 import { useState } from "react";
 import {
   MapPin, BedDouble, Bath, Ruler, ShieldCheck, Heart, Share2, Phone, MessageCircle,
-  Flag, CalendarCheck, ChevronLeft, ChevronRight, X, Check,
+  Flag, CalendarCheck, ChevronLeft, ChevronRight, X, Check, ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -114,12 +114,26 @@ function PropertyDetail() {
             </Section>
 
             <Section title="অবস্থান">
-              <div className="relative h-64 w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary-soft to-surface-2">
-                <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,oklch(0.9_0.01_240)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.9_0.01_240)_1px,transparent_1px)] [background-size:32px_32px]" />
-                <div className="absolute left-1/2 top-1/2 grid -translate-x-1/2 -translate-y-full place-items-center rounded-full bg-primary p-3 text-primary-foreground shadow-lift">
-                  <MapPin className="h-5 w-5" />
-                </div>
-                <div className="absolute bottom-3 right-3 rounded-lg bg-surface/95 px-3 py-1.5 text-xs">Google Map • ডেমো</div>
+              <div className="flex items-center gap-2 rounded-lg bg-muted p-3 text-sm">
+                <MapPin className="h-4 w-4 shrink-0 text-primary" />
+                <span className="flex-1 font-medium">{p.address}</span>
+                <a
+                  href={mapLinkUrl(`${p.address}, Dhaka, Bangladesh`)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                >
+                  ম্যাপে দেখুন <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
+              <div className="mt-3 overflow-hidden rounded-xl border border-border">
+                <iframe
+                  title={`মানচিত্র: ${p.address}`}
+                  src={mapEmbedUrl(`${p.address}, Dhaka, Bangladesh`)}
+                  className="h-64 w-full sm:h-80"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
               </div>
               <div className="mt-3 text-sm text-muted-foreground">নিকটস্থ: স্কুল ৫ মিনিট • বাজার ৩ মিনিট • হাসপাতাল ৮ মিনিট</div>
             </Section>
@@ -132,8 +146,8 @@ function PropertyDetail() {
                 <button onClick={() => setVisitOpen(true)} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"><CalendarCheck className="h-4 w-4" /> ভিজিট বুক করুন</button>
                 <Link to="/apply/$propertyId" params={{ propertyId: p.id }} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-2.5 text-sm font-semibold text-accent-foreground hover:brightness-105">আবেদন করুন</Link>
                 <div className="grid grid-cols-2 gap-2">
-                  <a href={`tel:${owner?.phone.replace(/[^0-9+]/g, "")}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><Phone className="h-4 w-4" /> কল</a>
-                  <a href="https://wa.me/8801700000000" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
+                  <a href={`tel:+880${(owner?.phoneEn ?? "").slice(1)}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><Phone className="h-4 w-4" /> কল</a>
+                  <a href={`https://wa.me/880${(owner?.phoneEn ?? "").slice(1)}?text=${encodeURIComponent(`বাড়িলাগবে থেকে ${p.title} সম্পর্কে জানতে চাই।`)}`} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><MessageCircle className="h-4 w-4" /> WhatsApp</a>
                   <button onClick={() => { toggle(p.id); toast.success(isFav ? "সরানো হয়েছে" : "ফেভারিট"); }} className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><Heart className={`h-4 w-4 ${isFav ? "fill-destructive text-destructive" : ""}`} /> সেভ</button>
                   <button onClick={share} className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-border py-2 text-sm font-semibold hover:bg-muted"><Share2 className="h-4 w-4" /> শেয়ার</button>
                 </div>
