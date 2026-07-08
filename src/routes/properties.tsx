@@ -54,7 +54,7 @@ function SearchPage() {
   }, [JSON.stringify(params)]);
 
   const set = (patch: Partial<typeof params>) =>
-    navigate({ search: (prev) => ({ ...prev, ...patch, page: 1 }) as any });
+    navigate({ search: (prev: any) => ({ ...prev, ...patch, page: 1 }) as any });
 
   const filtered = useMemo(() => {
     let arr = PROPERTIES.filter((p) => {
@@ -198,7 +198,7 @@ function SearchPage() {
             {totalPages > 1 && (
               <div className="mt-8 flex items-center justify-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                  <button key={n} onClick={() => navigate({ search: (prev) => ({ ...prev, page: n }) as any })} className={`grid h-9 w-9 place-items-center rounded-lg text-sm font-semibold ${n === currentPage ? "bg-primary text-primary-foreground" : "border border-border bg-surface hover:bg-muted"}`}>
+                  <button key={n} onClick={() => navigate({ search: (prev: any) => ({ ...prev, page: n }) as any })} className={`grid h-9 w-9 place-items-center rounded-lg text-sm font-semibold ${n === currentPage ? "bg-primary text-primary-foreground" : "border border-border bg-surface hover:bg-muted"}`}>
                     {bn(n)}
                   </button>
                 ))}
