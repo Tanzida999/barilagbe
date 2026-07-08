@@ -9,20 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VisitsRouteImport } from './routes/visits'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PropertiesRouteImport } from './routes/properties'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OwnersRouteImport } from './routes/owners'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
 import { Route as OwnersRegisterRouteImport } from './routes/owners.register'
+import { Route as LegalTenantIdRouteImport } from './routes/legal.$tenantId'
+import { Route as DashboardTenantRouteImport } from './routes/dashboard.tenant'
+import { Route as DashboardOwnerRouteImport } from './routes/dashboard.owner'
+import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as ApplyPropertyIdRouteImport } from './routes/apply.$propertyId'
 
+const VisitsRoute = VisitsRouteImport.update({
+  id: '/visits',
+  path: '/visits',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -43,6 +57,11 @@ const PropertiesRoute = PropertiesRouteImport.update({
   path: '/properties',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -53,9 +72,24 @@ const OwnersRoute = OwnersRouteImport.update({
   path: '/owners',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -83,6 +117,26 @@ const OwnersRegisterRoute = OwnersRegisterRouteImport.update({
   path: '/register',
   getParentRoute: () => OwnersRoute,
 } as any)
+const LegalTenantIdRoute = LegalTenantIdRouteImport.update({
+  id: '/legal/$tenantId',
+  path: '/legal/$tenantId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardTenantRoute = DashboardTenantRouteImport.update({
+  id: '/tenant',
+  path: '/tenant',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardOwnerRoute = DashboardOwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAdminRoute = DashboardAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ApplyPropertyIdRoute = ApplyPropertyIdRouteImport.update({
   id: '/apply/$propertyId',
   path: '/apply/$propertyId',
@@ -93,14 +147,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/owner': typeof DashboardOwnerRoute
+  '/dashboard/tenant': typeof DashboardTenantRoute
+  '/legal/$tenantId': typeof LegalTenantIdRoute
   '/owners/register': typeof OwnersRegisterRoute
   '/properties/$id': typeof PropertiesIdRoute
 }
@@ -108,14 +171,23 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/owner': typeof DashboardOwnerRoute
+  '/dashboard/tenant': typeof DashboardTenantRoute
+  '/legal/$tenantId': typeof LegalTenantIdRoute
   '/owners/register': typeof OwnersRegisterRoute
   '/properties/$id': typeof PropertiesIdRoute
 }
@@ -124,14 +196,23 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
+  '/dashboard': typeof DashboardRouteWithChildren
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
+  '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
+  '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/owner': typeof DashboardOwnerRoute
+  '/dashboard/tenant': typeof DashboardTenantRoute
+  '/legal/$tenantId': typeof LegalTenantIdRoute
   '/owners/register': typeof OwnersRegisterRoute
   '/properties/$id': typeof PropertiesIdRoute
 }
@@ -141,14 +222,23 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dashboard'
+    | '/faq'
     | '/login'
+    | '/notifications'
     | '/owners'
     | '/privacy'
+    | '/profile'
     | '/properties'
     | '/register'
     | '/services'
     | '/terms'
+    | '/visits'
     | '/apply/$propertyId'
+    | '/dashboard/admin'
+    | '/dashboard/owner'
+    | '/dashboard/tenant'
+    | '/legal/$tenantId'
     | '/owners/register'
     | '/properties/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -156,14 +246,23 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dashboard'
+    | '/faq'
     | '/login'
+    | '/notifications'
     | '/owners'
     | '/privacy'
+    | '/profile'
     | '/properties'
     | '/register'
     | '/services'
     | '/terms'
+    | '/visits'
     | '/apply/$propertyId'
+    | '/dashboard/admin'
+    | '/dashboard/owner'
+    | '/dashboard/tenant'
+    | '/legal/$tenantId'
     | '/owners/register'
     | '/properties/$id'
   id:
@@ -171,14 +270,23 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
+    | '/dashboard'
+    | '/faq'
     | '/login'
+    | '/notifications'
     | '/owners'
     | '/privacy'
+    | '/profile'
     | '/properties'
     | '/register'
     | '/services'
     | '/terms'
+    | '/visits'
     | '/apply/$propertyId'
+    | '/dashboard/admin'
+    | '/dashboard/owner'
+    | '/dashboard/tenant'
+    | '/legal/$tenantId'
     | '/owners/register'
     | '/properties/$id'
   fileRoutesById: FileRoutesById
@@ -187,18 +295,31 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
+  FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
+  NotificationsRoute: typeof NotificationsRoute
   OwnersRoute: typeof OwnersRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
+  ProfileRoute: typeof ProfileRoute
   PropertiesRoute: typeof PropertiesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
+  VisitsRoute: typeof VisitsRoute
   ApplyPropertyIdRoute: typeof ApplyPropertyIdRoute
+  LegalTenantIdRoute: typeof LegalTenantIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/visits': {
+      id: '/visits'
+      path: '/visits'
+      fullPath: '/visits'
+      preLoaderRoute: typeof VisitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -227,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -241,11 +369,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -283,6 +432,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OwnersRegisterRouteImport
       parentRoute: typeof OwnersRoute
     }
+    '/legal/$tenantId': {
+      id: '/legal/$tenantId'
+      path: '/legal/$tenantId'
+      fullPath: '/legal/$tenantId'
+      preLoaderRoute: typeof LegalTenantIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/tenant': {
+      id: '/dashboard/tenant'
+      path: '/tenant'
+      fullPath: '/dashboard/tenant'
+      preLoaderRoute: typeof DashboardTenantRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/owner': {
+      id: '/dashboard/owner'
+      path: '/owner'
+      fullPath: '/dashboard/owner'
+      preLoaderRoute: typeof DashboardOwnerRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/admin': {
+      id: '/dashboard/admin'
+      path: '/admin'
+      fullPath: '/dashboard/admin'
+      preLoaderRoute: typeof DashboardAdminRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/apply/$propertyId': {
       id: '/apply/$propertyId'
       path: '/apply/$propertyId'
@@ -292,6 +469,22 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface DashboardRouteChildren {
+  DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardOwnerRoute: typeof DashboardOwnerRoute
+  DashboardTenantRoute: typeof DashboardTenantRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAdminRoute: DashboardAdminRoute,
+  DashboardOwnerRoute: DashboardOwnerRoute,
+  DashboardTenantRoute: DashboardTenantRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
 
 interface OwnersRouteChildren {
   OwnersRegisterRoute: typeof OwnersRegisterRoute
@@ -320,14 +513,20 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
+  DashboardRoute: DashboardRouteWithChildren,
+  FaqRoute: FaqRoute,
   LoginRoute: LoginRoute,
+  NotificationsRoute: NotificationsRoute,
   OwnersRoute: OwnersRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
+  ProfileRoute: ProfileRoute,
   PropertiesRoute: PropertiesRouteWithChildren,
   RegisterRoute: RegisterRoute,
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
+  VisitsRoute: VisitsRoute,
   ApplyPropertyIdRoute: ApplyPropertyIdRoute,
+  LegalTenantIdRoute: LegalTenantIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
