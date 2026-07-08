@@ -1,23 +1,39 @@
-// Realistic Bangla mock data for BariLagbe (বাড়িলাগবে)
+// Realistic Bangla mock data for BariLagbe (বাড়িলাগবে) — Dhaka only.
 import p1 from "@/assets/property-1.jpg";
 import p2 from "@/assets/property-2.jpg";
 import p3 from "@/assets/property-3.jpg";
 
 export const IMAGES = [p1, p2, p3];
 
-export const DIVISIONS = ["ঢাকা", "চট্টগ্রাম", "সিলেট", "রাজশাহী", "খুলনা", "বরিশাল", "রংপুর", "ময়মনসিংহ"];
-export const DISTRICTS: Record<string, string[]> = {
-  "ঢাকা": ["ঢাকা", "গাজীপুর", "নারায়ণগঞ্জ", "সাভার"],
-  "চট্টগ্রাম": ["চট্টগ্রাম", "কক্সবাজার", "কুমিল্লা"],
-  "সিলেট": ["সিলেট", "মৌলভীবাজার"],
-  "রাজশাহী": ["রাজশাহী", "বগুড়া"],
-  "খুলনা": ["খুলনা", "যশোর"],
-  "বরিশাল": ["বরিশাল"],
-  "রংপুর": ["রংপুর", "দিনাজপুর"],
-  "ময়মনসিংহ": ["ময়মনসিংহ"],
-};
-export const THANAS = ["ধানমন্ডি", "উত্তরা", "গুলশান", "বনানী", "মিরপুর", "মোহাম্মদপুর", "বসুন্ধরা", "মহাখালী", "বাড্ডা", "রামপুরা"];
-export const AREAS = ["রোড ১১", "রোড ২৭", "সেক্টর ৪", "সেক্টর ৭", "সাত মসজিদ রোড", "কলাবাগান", "ব্লক এ", "ব্লক বি"];
+// Dhaka-only geography. Real thanas with representative areas and approximate coordinates.
+export const DIVISIONS = ["ঢাকা"];
+export const DISTRICTS: Record<string, string[]> = { "ঢাকা": ["ঢাকা"] };
+
+export interface ThanaInfo {
+  name: string;
+  areas: string[];
+  lat: number;
+  lng: number;
+}
+
+export const THANA_DATA: ThanaInfo[] = [
+  { name: "ধানমন্ডি", areas: ["রোড ২৭", "রোড ১১", "রোড ৩২", "সাত মসজিদ রোড", "কলাবাগান"], lat: 23.7461, lng: 90.3742 },
+  { name: "গুলশান", areas: ["গুলশান ১", "গুলশান ২", "নিকেতন", "বারিধারা"], lat: 23.7925, lng: 90.4078 },
+  { name: "বনানী", areas: ["রোড ১১", "রোড ২৭", "কামাল আতাতুর্ক এভিনিউ", "চেয়ারম্যান বাড়ি"], lat: 23.7937, lng: 90.4066 },
+  { name: "উত্তরা", areas: ["সেক্টর ৩", "সেক্টর ৪", "সেক্টর ৭", "সেক্টর ১০", "সেক্টর ১৩"], lat: 23.8759, lng: 90.3795 },
+  { name: "মিরপুর", areas: ["মিরপুর ১", "মিরপুর ২", "মিরপুর ১০", "মিরপুর ১২", "পল্লবী", "কাজীপাড়া"], lat: 23.8069, lng: 90.3687 },
+  { name: "মোহাম্মদপুর", areas: ["ইকবাল রোড", "শিয়া মসজিদ", "লালমাটিয়া", "আসাদ এভিনিউ", "কাদেরাবাদ হাউজিং"], lat: 23.7654, lng: 90.3591 },
+  { name: "বসুন্ধরা", areas: ["ব্লক এ", "ব্লক বি", "ব্লক সি", "ব্লক ডি", "ব্লক এফ", "ব্লক জে"], lat: 23.8138, lng: 90.4260 },
+  { name: "বাড্ডা", areas: ["মেরুল বাড্ডা", "উত্তর বাড্ডা", "মধ্য বাড্ডা", "শাহজাদপুর"], lat: 23.7806, lng: 90.4260 },
+  { name: "রামপুরা", areas: ["পশ্চিম রামপুরা", "পূর্ব রামপুরা", "বনশ্রী", "উলন"], lat: 23.7647, lng: 90.4257 },
+  { name: "মহাখালী", areas: ["ডিওএইচএস", "ওয়ারলেস গেট", "টিবি গেট", "আমতলী"], lat: 23.7773, lng: 90.4053 },
+  { name: "খিলগাঁও", areas: ["সি ব্লক", "চৌধুরীপাড়া", "তালতলা", "গোড়ান"], lat: 23.7481, lng: 90.4258 },
+  { name: "মগবাজার", areas: ["বড় মগবাজার", "নয়াটোলা", "মধুবাগ", "পেয়ারাবাগ"], lat: 23.7509, lng: 90.4048 },
+];
+
+export const THANAS = THANA_DATA.map((t) => t.name);
+export const AREAS_BY_THANA: Record<string, string[]> = Object.fromEntries(THANA_DATA.map((t) => [t.name, t.areas]));
+export const AREAS = THANA_DATA.flatMap((t) => t.areas);
 export const PROPERTY_TYPES = ["ফ্ল্যাট", "বাড়ি", "অফিস", "দোকান"] as const;
 
 export type PropertyType = typeof PROPERTY_TYPES[number];
@@ -55,6 +71,7 @@ export interface Owner {
   id: string;
   name: string;
   phone: string;
+  phoneEn: string;
   email: string;
   nid: string;
   bank: string;
@@ -102,7 +119,7 @@ export interface RentPayment {
   id: string;
   tenantId: string;
   propertyId: string;
-  month: string; // YYYY-MM
+  month: string;
   amount: number;
   paidAt?: string;
   status: "paid" | "pending" | "overdue";
@@ -142,7 +159,6 @@ export interface SupportTicket {
   createdAt: string;
 }
 
-// Deterministic PRNG so results are stable across renders
 function mulberry32(seed: number) {
   return () => {
     let t = (seed += 0x6d2b79f5);
@@ -165,43 +181,48 @@ const OCCUPATIONS = ["সরকারি চাকরি", "বেসরকা�
 const AMENITIES = ["লিফট", "জেনারেটর", "নিরাপত্তা", "সিসিটিভি", "পার্কিং", "গ্যাস", "লন্ড্রি", "বারান্দা", "গিজার", "ইন্টারনেট"];
 const RULES = ["ধূমপান নিষেধ", "পোষা প্রাণী নিষেধ", "রাত ১০টার পর নীরবতা", "পরিবার শুধুমাত্র", "বিবাহিত পছন্দনীয়"];
 
-function makePhone() {
-  return "০১" + pick(["৭", "৮", "৯"]) + bnDigit(range(10000000, 99999999));
+function makePhoneEn() {
+  return "01" + pick(["7", "8", "9"]) + String(range(10000000, 99999999));
 }
 
-export const OWNERS: Owner[] = Array.from({ length: 20 }, (_, i) => ({
-  id: `own-${i + 1}`,
-  name: pick([...NAMES_M, ...NAMES_F]),
-  phone: makePhone(),
-  email: `owner${i + 1}@barilagbe.com.bd`,
-  nid: bnDigit(String(1990000000000 + i)),
-  bank: pick(["ডাচ-বাংলা ব্যাংক", "ব্র্যাক ব্যাংক", "ইসলামী ব্যাংক", "সিটি ব্যাংক", "প্রাইম ব্যাংক"]),
-  accountNo: bnDigit(String(1000000000000 + i * 137)),
-  joinedAt: new Date(2024, range(0, 11), range(1, 28)).toISOString(),
-  propertyIds: [],
-}));
+export const OWNERS: Owner[] = Array.from({ length: 20 }, (_, i) => {
+  const en = makePhoneEn();
+  return {
+    id: `own-${i + 1}`,
+    name: pick([...NAMES_M, ...NAMES_F]),
+    phone: bnDigit(en),
+    phoneEn: en,
+    email: `owner${i + 1}@barilagbe.com.bd`,
+    nid: bnDigit(String(1990000000000 + i)),
+    bank: pick(["ডাচ-বাংলা ব্যাংক", "ব্র্যাক ব্যাংক", "ইসলামী ব্যাংক", "সিটি ব্যাংক", "প্রাইম ব্যাংক"]),
+    accountNo: bnDigit(String(1000000000000 + i * 137)),
+    joinedAt: new Date(2024, range(0, 11), range(1, 28)).toISOString(),
+    propertyIds: [],
+  };
+});
 
 export const PROPERTIES: Property[] = Array.from({ length: 50 }, (_, i) => {
-  const division = pick(DIVISIONS);
-  const district = pick(DISTRICTS[division] || [division]);
-  const thana = pick(THANAS);
-  const area = pick(AREAS);
+  const thanaInfo = THANA_DATA[i % THANA_DATA.length];
+  const thana = thanaInfo.name;
+  const area = thanaInfo.areas[i % thanaInfo.areas.length];
   const type = pick(PROPERTY_TYPES);
   const bedrooms = type === "দোকান" ? 0 : range(1, 4);
   const bathrooms = type === "দোকান" ? 1 : Math.max(1, bedrooms - range(0, 1));
   const rent = range(8, 60) * 1000;
   const sqft = range(500, 2200);
   const ownerId = OWNERS[i % OWNERS.length].id;
+  const houseNo = range(1, 120);
   OWNERS[i % OWNERS.length].propertyIds.push(`prop-${i + 1}`);
+  const jitter = () => (rand() - 0.5) * 0.012;
   return {
     id: `prop-${i + 1}`,
-    title: `${bnDigit(bedrooms)} বেডরুম ${type} — ${thana}`,
+    title: `${bnDigit(bedrooms)} বেডরুম ${type} — ${area}, ${thana}`,
     type,
-    division,
-    district,
+    division: "ঢাকা",
+    district: "ঢাকা",
     thana,
     area,
-    address: `${area}, ${thana}, ${district}`,
+    address: `বাড়ি ${bnDigit(houseNo)}, ${area}, ${thana}, ঢাকা`,
     rent,
     bedrooms,
     bathrooms,
@@ -217,9 +238,9 @@ export const PROPERTIES: Property[] = Array.from({ length: 50 }, (_, i) => {
     images: [IMAGES[i % 3], IMAGES[(i + 1) % 3], IMAGES[(i + 2) % 3]],
     amenities: AMENITIES.filter(() => rand() > 0.4).slice(0, 6),
     rules: RULES.filter(() => rand() > 0.5).slice(0, 3),
-    description: `${area} এর প্রাণকেন্দ্রে অবস্থিত সুন্দর ও পরিপাটি ${type}। প্রশস্ত রুম, ভালো আলো-বাতাস, নিরাপদ পরিবেশ। স্কুল, বাজার ও হাসপাতাল কাছে।`,
-    lat: 23.7 + rand() * 0.2,
-    lng: 90.3 + rand() * 0.3,
+    description: `${area}, ${thana} এর প্রাণকেন্দ্রে অবস্থিত সুন্দর ও পরিপাটি ${type}। প্রশস্ত রুম, ভালো আলো-বাতাস, নিরাপদ পরিবেশ। স্কুল, বাজার ও হাসপাতাল কাছে।`,
+    lat: thanaInfo.lat + jitter(),
+    lng: thanaInfo.lng + jitter(),
   };
 });
 
@@ -229,7 +250,7 @@ export const TENANTS: Tenant[] = Array.from({ length: 100 }, (_, i) => {
   return {
     id: `ten-${i + 1}`,
     name: pick([...NAMES_M, ...NAMES_F]),
-    phone: makePhone(),
+    phone: bnDigit(makePhoneEn()),
     email: `tenant${i + 1}@mail.com`,
     nid: bnDigit(String(1995000000000 + i)),
     occupation: pick(OCCUPATIONS),
@@ -259,7 +280,7 @@ export const VISITS: Visit[] = Array.from({ length: 40 }, (_, i) => {
     id: `vis-${i + 1}`,
     propertyId: PROPERTIES[i % PROPERTIES.length].id,
     visitorName: pick([...NAMES_M, ...NAMES_F]),
-    phone: makePhone(),
+    phone: bnDigit(makePhoneEn()),
     date: d.toISOString().slice(0, 10),
     time: pick(["১০:০০", "১১:৩০", "০২:০০", "০৩:৩০", "০৫:০০"]),
     staffId: `staff-${range(1, 5)}`,
@@ -296,8 +317,8 @@ export const NOTIFICATIONS: Notification[] = [
 export const ADVOCATES: Advocate[] = Array.from({ length: 8 }, (_, i) => ({
   id: `adv-${i + 1}`,
   name: `অ্যাডভোকেট ${pick(NAMES_M)}`,
-  phone: makePhone(),
-  city: pick(DIVISIONS),
+  phone: bnDigit(makePhoneEn()),
+  city: "ঢাকা",
   specialty: pick(["বাড়ি ভাড়া আইন", "সম্পত্তি আইন", "দেওয়ানী মামলা", "চুক্তি আইন"]),
   rating: 3 + rand() * 2,
 }));
@@ -306,7 +327,7 @@ export const STAFF: Staff[] = Array.from({ length: 6 }, (_, i) => ({
   id: `staff-${i + 1}`,
   name: pick([...NAMES_M, ...NAMES_F]),
   role: pick(["ফিল্ড এজেন্ট", "ভিজিট কোঅর্ডিনেটর", "সাপোর্ট", "ম্যানেজার"]),
-  phone: makePhone(),
+  phone: bnDigit(makePhoneEn()),
 }));
 
 export const TICKETS: SupportTicket[] = Array.from({ length: 12 }, (_, i) => ({
@@ -321,3 +342,11 @@ export const TICKETS: SupportTicket[] = Array.from({ length: 12 }, (_, i) => ({
 export const getProperty = (id: string) => PROPERTIES.find((p) => p.id === id);
 export const getOwner = (id: string) => OWNERS.find((o) => o.id === id);
 export const getTenant = (id: string) => TENANTS.find((t) => t.id === id);
+
+// Google Maps embed URL (no API key required — works via public Maps embed).
+export function mapEmbedUrl(query: string) {
+  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=16&hl=bn&output=embed`;
+}
+export function mapLinkUrl(query: string) {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
