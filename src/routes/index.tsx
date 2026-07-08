@@ -7,7 +7,7 @@ import {
 import { SiteNav, SiteFooter } from "@/components/site-chrome";
 import { PropertyCard } from "@/components/property-card";
 import heroImg from "@/assets/hero-skyline.jpg";
-import { PROPERTIES, DIVISIONS, THANAS, bn } from "@/lib/mock-data";
+import { PROPERTIES, THANAS, AREAS_BY_THANA, bn } from "@/lib/mock-data";
 import { useState, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -102,17 +102,18 @@ function Hero() {
 
 function SearchPanel() {
   const navigate = useNavigate();
-  const [division, setDivision] = useState("ঢাকা");
   const [thana, setThana] = useState("");
+  const [area, setArea] = useState("");
   const [bedrooms, setBedrooms] = useState("");
   const [maxRent, setMaxRent] = useState("");
+  const areas = thana ? AREAS_BY_THANA[thana] ?? [] : [];
 
   const submit = () => {
     navigate({
       to: "/properties",
       search: {
-        division,
         thana: thana || undefined,
+        area: area || undefined,
         bedrooms: bedrooms ? Number(bedrooms) : undefined,
         maxRent: maxRent ? Number(maxRent) : undefined,
       } as any,
@@ -122,16 +123,17 @@ function SearchPanel() {
   return (
     <section className="relative z-10 mx-auto -mt-16 max-w-6xl px-4 sm:px-6">
       <div className="rounded-3xl bg-surface p-6 shadow-lift ring-1 ring-border sm:p-8">
-        <h2 className="mb-4 text-lg font-bold text-foreground">আপনি কী খুঁজছেন?</h2>
+        <h2 className="mb-1 text-lg font-bold text-foreground">ঢাকায় আপনি কী খুঁজছেন?</h2>
+        <p className="mb-4 text-xs text-muted-foreground">শুধু ঢাকা শহরের যাচাইকৃত বাসা</p>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <Field label="বিভাগ" value={division} onChange={setDivision} options={DIVISIONS} />
-          <Field label="থানা" value={thana} onChange={setThana} options={["", ...THANAS]} placeholder="সব থানা" />
+          <Field label="থানা" value={thana} onChange={(v) => { setThana(v); setArea(""); }} options={["", ...THANAS]} placeholder="সব থানা" />
+          <Field label="এলাকা" value={area} onChange={setArea} options={["", ...areas]} placeholder={thana ? "সব এলাকা" : "প্রথমে থানা"} disabled={!thana} />
           <Field label="বেডরুম" value={bedrooms} onChange={setBedrooms} options={["", "1", "2", "3", "4"]} placeholder="যেকোনো" />
           <Field label="সর্বোচ্চ ভাড়া" value={maxRent} onChange={setMaxRent} options={["", "15000", "20000", "30000", "50000"]} placeholder="যেকোনো" />
         </div>
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-muted-foreground">
-            <MapPin className="mr-1 inline h-3.5 w-3.5" /> {bn(PROPERTIES.length)}+ যাচাইকৃত বাসা
+            <MapPin className="mr-1 inline h-3.5 w-3.5" /> {bn(PROPERTIES.length)}+ যাচাইকৃত বাসা — ঢাকা
           </p>
           <button onClick={submit} className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-soft transition hover:bg-primary/90">
             <Search className="h-4 w-4" /> অনুসন্ধান করুন
@@ -142,11 +144,11 @@ function SearchPanel() {
   );
 }
 
-function Field({ label, value, onChange, options, placeholder }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string }) {
+function Field({ label, value, onChange, options, placeholder, disabled }: { label: string; value: string; onChange: (v: string) => void; options: string[]; placeholder?: string; disabled?: boolean }) {
   return (
     <label className="flex flex-col gap-1.5">
       <span className="text-xs font-semibold text-muted-foreground">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="h-11 rounded-xl border border-input bg-surface px-3 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary-soft">
+      <select disabled={disabled} value={value} onChange={(e) => onChange(e.target.value)} className="h-11 rounded-xl border border-input bg-surface px-3 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary-soft disabled:opacity-50">
         {options.map((o) => (
           <option key={o} value={o}>{o === "" ? (placeholder ?? "সব") : o}</option>
         ))}
