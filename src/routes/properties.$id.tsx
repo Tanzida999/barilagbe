@@ -127,14 +127,8 @@ function PropertyDetail() {
                   ম্যাপে দেখুন <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
-              <div className="mt-3 overflow-hidden rounded-xl border border-border">
-                <iframe
-                  title={`মানচিত্র: ${p.address}`}
-                  src={mapEmbedUrl(`${p.address}, Dhaka, Bangladesh`)}
-                  className="h-64 w-full sm:h-80"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div className="mt-3">
+                <PropertyMap lat={p.lat} lng={p.lng} title={p.title} address={p.address} />
               </div>
               <div className="mt-3 text-sm text-muted-foreground">নিকটস্থ: স্কুল ৫ মিনিট • বাজার ৩ মিনিট • হাসপাতাল ৮ মিনিট</div>
             </Section>
