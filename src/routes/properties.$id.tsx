@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PageShell, Crumbs } from "@/components/site-chrome";
 import { BookVisitModal } from "@/components/book-visit-modal";
-import { getProperty, getOwner, bn, mapEmbedUrl, mapLinkUrl } from "@/lib/mock-data";
+import { PropertyMap } from "@/components/property-map";
+import { getProperty, getOwner, bn, mapLinkUrl } from "@/lib/mock-data";
 import { useAppStore } from "@/lib/store";
 import { useState } from "react";
 import {
@@ -126,14 +127,8 @@ function PropertyDetail() {
                   ম্যাপে দেখুন <ExternalLink className="h-3 w-3" />
                 </a>
               </div>
-              <div className="mt-3 overflow-hidden rounded-xl border border-border">
-                <iframe
-                  title={`মানচিত্র: ${p.address}`}
-                  src={mapEmbedUrl(`${p.address}, Dhaka, Bangladesh`)}
-                  className="h-64 w-full sm:h-80"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
+              <div className="mt-3">
+                <PropertyMap lat={p.lat} lng={p.lng} title={p.title} address={p.address} />
               </div>
               <div className="mt-3 text-sm text-muted-foreground">নিকটস্থ: স্কুল ৫ মিনিট • বাজার ৩ মিনিট • হাসপাতাল ৮ মিনিট</div>
             </Section>
