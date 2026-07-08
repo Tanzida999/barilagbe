@@ -1,0 +1,11 @@
+[build]
+  command = "bun run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# TanStack Start (via Nitro's netlify preset) emits a Netlify Functions
+# handler and the correct redirects into the publish dir during build.
+# No additional [[redirects]] are needed here — SPA/SSR routing is handled
+# by the generated _redirects file.
