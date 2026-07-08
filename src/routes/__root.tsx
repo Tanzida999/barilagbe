@@ -79,21 +79,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "বাড়িলাগবে — বাংলাদেশের ভাড়া বাসা ও সম্পত্তি ব্যবস্থাপনা প্ল্যাটফর্ম" },
+      { title: "বাড়িলাগবে — শুধু বাসা খোঁজা নয়, সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
       {
         name: "description",
         content:
-          "শুধু বাসা খোঁজা নয় — ভাড়াটিয়া যাচাই, ভিজিট, চুক্তি এবং মাসিক ভাড়া সম্পূর্ণ পরিচালনা।",
+          "বাংলাদেশের প্রথম সম্পূর্ণ ভাড়া ব্যবস্থাপনা প্ল্যাটফর্ম।",
       },
       { name: "author", content: "BariLagbe" },
-      { property: "og:title", content: "বাড়িলাগবে — সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
+      { property: "og:title", content: "বাড়িলাগবে — শুধু বাসা খোঁজা নয়, সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
       {
         property: "og:description",
-        content: "ভাড়াটিয়া যাচাই, চুক্তি, ভিজিট ও মাসিক ভাড়া — সবকিছু এক জায়গায়।",
+        content: "বাংলাদেশের প্রথম সম্পূর্ণ ভাড়া ব্যবস্থাপনা প্ল্যাটফর্ম।",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
 
+      { name: "twitter:title", content: "বাড়িলাগবে — শুধু বাসা খোঁজা নয়, সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
+      { name: "twitter:description", content: "বাংলাদেশের প্রথম সম্পূর্ণ ভাড়া ব্যবস্থাপনা প্ল্যাটফর্ম।" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4d84bdd-b1bc-4a74-98e3-8ac2450f3cb4/id-preview-64477385--3fafdbdd-da46-4f44-8ff1-2721b9263e46.lovable.app-1783482136013.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d4d84bdd-b1bc-4a74-98e3-8ac2450f3cb4/id-preview-64477385--3fafdbdd-da46-4f44-8ff1-2721b9263e46.lovable.app-1783482136013.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
