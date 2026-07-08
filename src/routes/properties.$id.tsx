@@ -67,7 +67,7 @@ function PropertyDetail() {
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-xs text-white">{bn(imgIdx + 1)} / {bn(p.images.length)}</div>
             </div>
             <div className="mt-3 grid grid-cols-3 gap-3">
-              {p.images.map((src, i) => (
+              {p.images.map((src: string, i: number) => (
                 <button key={i} onClick={() => setImgIdx(i)} className={`overflow-hidden rounded-xl border-2 ${i === imgIdx ? "border-primary" : "border-transparent"}`}>
                   <img src={src} className="h-24 w-full object-cover" alt="" />
                 </button>
@@ -101,7 +101,7 @@ function PropertyDetail() {
 
             <Section title="সুবিধা">
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {p.amenities.map((a) => (
+                {p.amenities.map((a: string) => (
                   <div key={a} className="flex items-center gap-2 rounded-lg bg-primary-soft px-3 py-2 text-sm text-primary"><Check className="h-4 w-4" /> {a}</div>
                 ))}
               </div>
@@ -109,7 +109,7 @@ function PropertyDetail() {
 
             <Section title="ভাড়ার নিয়ম">
               <ul className="space-y-2 text-sm">
-                {p.rules.map((r) => <li key={r} className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-primary" /> {r}</li>)}
+                {p.rules.map((r: string) => <li key={r} className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-primary" /> {r}</li>)}
               </ul>
             </Section>
 
