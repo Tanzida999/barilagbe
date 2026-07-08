@@ -79,20 +79,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "বাড়িবন্ধু — বাংলাদেশের ভাড়া বাসা ও সম্পত্তি ব্যবস্থাপনা প্ল্যাটফর্ম" },
+      { title: "বাড়িলাগবে — বাংলাদেশের ভাড়া বাসা ও সম্পত্তি ব্যবস্থাপনা প্ল্যাটফর্ম" },
       {
         name: "description",
         content:
           "শুধু বাসা খোঁজা নয় — ভাড়াটিয়া যাচাই, ভিজিট, চুক্তি এবং মাসিক ভাড়া সম্পূর্ণ পরিচালনা।",
       },
-      { name: "author", content: "BariBondhu" },
-      { property: "og:title", content: "বাড়িবন্ধু — সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
+      { name: "author", content: "BariLagbe" },
+      { property: "og:title", content: "বাড়িলাগবে — সম্পূর্ণ ভাড়া ব্যবস্থাপনা" },
       {
         property: "og:description",
         content: "ভাড়াটিয়া যাচাই, চুক্তি, ভিজিট ও মাসিক ভাড়া — সবকিছু এক জায়গায়।",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+
     ],
     links: [
       { rel: "stylesheet", href: appCss },
