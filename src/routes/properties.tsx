@@ -2,18 +2,23 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PageShell, Crumbs } from "@/components/site-chrome";
 import { PropertyCard } from "@/components/property-card";
 import { EmptyState, SkeletonCard } from "@/components/empty-state";
-import { PROPERTIES, DIVISIONS, THANAS, PROPERTY_TYPES, bn } from "@/lib/mock-data";
+import {
+  PROPERTIES,
+  THANAS,
+  AREAS_BY_THANA,
+  PROPERTY_TYPES,
+  bn,
+  mapEmbedUrl,
+} from "@/lib/mock-data";
 import { useAppStore } from "@/lib/store";
-import { useEffect, useMemo, useState } from "react";
-import { Search, SlidersHorizontal, Grid3x3, List, Map as MapIcon, Bookmark, X, MapPin, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Search, SlidersHorizontal, Grid3x3, List, Map as MapIcon, Bookmark, X, MapPin } from "lucide-react";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
   q: fallback(z.string(), "").default(""),
-  division: fallback(z.string(), "").default(""),
-  district: fallback(z.string(), "").default(""),
   thana: fallback(z.string(), "").default(""),
   area: fallback(z.string(), "").default(""),
   type: fallback(z.string(), "").default(""),
@@ -31,13 +36,19 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/properties")({
-  head: () => ({ meta: [{ title: "বাসা খুঁজুন — বাড়িলাগবে" }] }),
+  head: () => ({ meta: [{ title: "ঢাকায় বাসা খুঁজুন — বাড়িলাগবে" }] }),
   validateSearch: zodValidator(searchSchema),
   component: SearchPage,
   errorComponent: ({ error }) => <div className="p-8">{error.message}</div>,
 });
 
 const PER_PAGE = 9;
+
+// Lowercase-search index so filter runs are O(n) with cheap includes.
+const INDEX = PROPERTIES.map((p) => ({
+  p,
+  hay: (p.title + " " + p.address + " " + p.thana + " " + p.area).toLowerCase(),
+}));
 
 function SearchPage() {
   const params = Route.useSearch();
@@ -47,20 +58,33 @@ function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const saveSearch = useAppStore((s) => s.saveSearch);
 
+  // Debounced text input so typing doesn't spam URL updates.
+  const [qLocal, setQLocal] = useState(params.q);
+  const qDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => setQLocal(params.q), [params.q]);
+  const onQChange = (v: string) => {
+    setQLocal(v);
+    if (qDebounceRef.current) clearTimeout(qDebounceRef.current);
+    qDebounceRef.current = setTimeout(() => {
+      navigate({ search: (prev: any) => ({ ...prev, q: v, page: 1 }) as any });
+    }, 250);
+  };
+
   useEffect(() => {
     setLoading(true);
-    const t = setTimeout(() => setLoading(false), 300);
+    const t = setTimeout(() => setLoading(false), 150);
     return () => clearTimeout(t);
   }, [JSON.stringify(params)]);
 
   const set = (patch: Partial<typeof params>) =>
     navigate({ search: (prev: any) => ({ ...prev, ...patch, page: 1 }) as any });
 
+  const areaOptions = params.thana ? AREAS_BY_THANA[params.thana] ?? [] : [];
+
   const filtered = useMemo(() => {
-    let arr = PROPERTIES.filter((p) => {
-      if (params.q && !p.title.includes(params.q) && !p.address.includes(params.q)) return false;
-      if (params.division && p.division !== params.division) return false;
-      if (params.district && p.district !== params.district) return false;
+    const q = params.q.trim().toLowerCase();
+    let arr = INDEX.filter(({ p, hay }) => {
+      if (q && !hay.includes(q)) return false;
       if (params.thana && p.thana !== params.thana) return false;
       if (params.area && p.area !== params.area) return false;
       if (params.type && p.type !== params.type) return false;
@@ -73,12 +97,13 @@ function SearchPage() {
       if (params.verified && !p.verified) return false;
       if (params.available && !p.available) return false;
       return true;
-    });
+    }).map((x) => x.p);
     switch (params.sort) {
       case "rent_asc": arr = [...arr].sort((a, b) => a.rent - b.rent); break;
       case "rent_desc": arr = [...arr].sort((a, b) => b.rent - a.rent); break;
       case "popular": arr = [...arr].sort((a, b) => b.popularity - a.popularity); break;
-      case "recent": arr = [...arr].sort((a, b) => b.createdAt.localeCompare(a.createdAt)); break;
+      case "recent":
+      case "newest":
       default: arr = [...arr].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     }
     return arr;
@@ -88,13 +113,19 @@ function SearchPage() {
   const currentPage = Math.min(params.page, totalPages);
   const pageItems = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const reset = () => navigate({ search: {} as any });
+  const reset = () => { setQLocal(""); navigate({ search: {} as any }); };
   const doSave = () => {
     const label = window.prompt("সার্চের নাম দিন", `সার্চ ${new Date().toLocaleDateString("bn-BD")}`);
     if (!label) return;
     saveSearch(label, JSON.stringify(params));
     toast.success("সার্চ সংরক্ষিত");
   };
+
+  // Map query: focus on selected area/thana, else all of Dhaka.
+  const mapQuery =
+    params.area ? `${params.area}, ${params.thana}, Dhaka, Bangladesh`
+    : params.thana ? `${params.thana}, Dhaka, Bangladesh`
+    : "Dhaka, Bangladesh";
 
   return (
     <PageShell>
@@ -104,9 +135,9 @@ function SearchPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
-              value={params.q}
-              onChange={(e) => set({ q: e.target.value })}
-              placeholder="এলাকা বা ঠিকানা লিখুন..."
+              value={qLocal}
+              onChange={(e) => onQChange(e.target.value)}
+              placeholder="থানা, এলাকা বা ঠিকানা লিখুন..."
               className="h-11 w-full rounded-xl border border-input bg-surface pl-9 pr-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary-soft"
             />
           </div>
@@ -123,13 +154,16 @@ function SearchPage() {
                 <button onClick={reset} className="text-xs text-primary hover:underline">রিসেট</button>
               </div>
               <div className="mt-4 space-y-3">
-                <Select label="বিভাগ" value={params.division} onChange={(v) => set({ division: v })} options={["", ...DIVISIONS]} />
-                <Select label="থানা" value={params.thana} onChange={(v) => set({ thana: v })} options={["", ...THANAS]} />
+                <div className="rounded-lg bg-primary-soft px-3 py-2 text-xs font-semibold text-primary">
+                  <MapPin className="mr-1 inline h-3 w-3" /> শহর: ঢাকা
+                </div>
+                <Select label="থানা" value={params.thana} onChange={(v) => set({ thana: v, area: "" })} options={["", ...THANAS]} />
+                <Select label="এলাকা" value={params.area} onChange={(v) => set({ area: v })} options={["", ...areaOptions]} disabled={!params.thana} />
                 <Select label="সম্পত্তির ধরন" value={params.type} onChange={(v) => set({ type: v })} options={["", ...PROPERTY_TYPES]} />
                 <NumSelect label="বেডরুম (কমপক্ষে)" value={params.bedrooms} onChange={(v) => set({ bedrooms: v })} options={[0, 1, 2, 3, 4]} />
                 <NumSelect label="বাথরুম (কমপক্ষে)" value={params.bathrooms} onChange={(v) => set({ bathrooms: v })} options={[0, 1, 2, 3]} />
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground">ভাড়ার পরিসর: ৳{bn((params.minRent || 0).toLocaleString("en-US"))} - ৳{bn((params.maxRent || 60000).toLocaleString("en-US"))}</label>
+                  <label className="text-xs font-semibold text-muted-foreground">সর্বোচ্চ ভাড়া: ৳{bn((params.maxRent || 60000).toLocaleString("en-US"))}</label>
                   <input type="range" min={0} max={60000} step={1000} value={params.maxRent || 60000} onChange={(e) => set({ maxRent: Number(e.target.value) })} className="mt-2 w-full accent-primary" />
                 </div>
                 <div>
@@ -169,14 +203,20 @@ function SearchPage() {
 
             {showMap && (
               <div className="mt-4 overflow-hidden rounded-2xl border border-border">
-                <div className="relative h-64 w-full bg-gradient-to-br from-primary-soft to-surface-2">
-                  <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,oklch(0.9_0.01_240)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.9_0.01_240)_1px,transparent_1px)] [background-size:32px_32px]" />
-                  {pageItems.slice(0, 8).map((p, i) => (
-                    <Link key={p.id} to="/properties/$id" params={{ id: p.id }} className="absolute grid -translate-x-1/2 -translate-y-full place-items-center rounded-full bg-primary p-2 text-primary-foreground shadow-lift hover:scale-110" style={{ left: `${15 + i * 10}%`, top: `${30 + (i % 3) * 20}%` }}>
-                      <MapPin className="h-4 w-4" />
+                <iframe
+                  title={`মানচিত্র: ${mapQuery}`}
+                  key={mapQuery}
+                  src={mapEmbedUrl(mapQuery)}
+                  className="h-72 w-full sm:h-96"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <div className="flex flex-wrap gap-2 border-t border-border bg-surface p-3">
+                  {pageItems.slice(0, 6).map((p) => (
+                    <Link key={p.id} to="/properties/$id" params={{ id: p.id }} className="inline-flex items-center gap-1 rounded-full bg-primary-soft px-3 py-1 text-xs font-medium text-primary hover:bg-primary hover:text-primary-foreground">
+                      <MapPin className="h-3 w-3" /> {p.area}, {p.thana}
                     </Link>
                   ))}
-                  <div className="absolute bottom-3 right-3 rounded-lg bg-surface/95 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-soft">Google Map • ডেমো</div>
                 </div>
               </div>
             )}
@@ -211,11 +251,11 @@ function SearchPage() {
   );
 }
 
-function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function Select({ label, value, onChange, options, disabled }: { label: string; value: string; onChange: (v: string) => void; options: string[]; disabled?: boolean }) {
   return (
     <label className="block">
       <span className="text-xs font-semibold text-muted-foreground">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-input bg-surface px-2 text-sm">
+      <select disabled={disabled} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 h-10 w-full rounded-lg border border-input bg-surface px-2 text-sm disabled:opacity-50">
         {options.map((o) => <option key={o} value={o}>{o === "" ? "সব" : o}</option>)}
       </select>
     </label>
