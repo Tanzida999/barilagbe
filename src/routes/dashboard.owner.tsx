@@ -30,8 +30,23 @@ function OwnerDash() {
     { icon: CalendarCheck, label: "ভিজিট রিকোয়েস্ট", value: bn(visitReq), tone: "secondary" },
   ];
 
+  const myBuildings = BUILDINGS.filter((b) => b.ownerId === ownerId).map((b) => {
+    const units = unitsOfBuilding(b.id);
+    const rentedUnits = units.filter((u) => !u.available);
+    const vacantUnits = units.filter((u) => u.available);
+    return {
+      ...b,
+      total: units.length,
+      rented: rentedUnits.length,
+      vacant: vacantUnits.length,
+      income: rentedUnits.reduce((s, u) => s + u.rent, 0),
+      loss: vacantUnits.reduce((s, u) => s + u.rent, 0),
+    };
+  });
+
   const months = ["জানু", "ফেব্রু", "মার্চ", "এপ্রি", "মে", "জুন", "জুল"];
   const chart = [12, 18, 22, 25, 30, 28, 35];
+
 
   return (
     <div className="space-y-6">
