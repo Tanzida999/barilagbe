@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  AGENTS, BUILDINGS, PROPERTIES, buildingSummary, unitsOfBuilding, bn, mapEmbedUrl,
+  AGENTS, BUILDINGS, PROPERTIES, TENANTS, buildingSummary, unitsOfBuilding, getTenantPrivate, bn, mapEmbedUrl,
 } from "@/lib/mock-data";
 import { useAppStore } from "@/lib/store";
 import { EmptyState } from "@/components/empty-state";
-import { MapPin, Building2, CalendarCheck, Wallet, FileSignature, Phone } from "lucide-react";
+import { MapPin, Building2, CalendarCheck, Wallet, FileSignature, Phone, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/agent")({
   head: () => ({
@@ -21,6 +21,7 @@ export const Route = createFileRoute("/dashboard/agent")({
 
 function AgentDash() {
   const visits = useAppStore((s) => s.visits);
+  const role = useAppStore((s) => s.role);
   const [agentId, setAgentId] = useState(AGENTS[0].id);
   const agent = AGENTS.find((a) => a.id === agentId)!;
 
@@ -137,6 +138,8 @@ function AgentDash() {
         )}
       </div>
 
+      <PrivateTenants role={role} unitIds={unitIds} />
+
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft">
         <h2 className="font-bold">অপেক্ষমাণ ভিজিট</h2>
         {pendingVisits.length === 0 ? <EmptyState title="কোনো ভিজিট নেই" description="নতুন ভিজিট রিকোয়েস্ট এলে এখানে দেখাবে।" /> : (
@@ -150,6 +153,47 @@ function AgentDash() {
           </ul>
         )}
       </div>
+    </div>
+  );
+}
+
+/** গোপন ভাড়াটিয়া তথ্য — শুধু অ্যাডমিন, এজেন্ট ও আইনজীবী দেখতে পান। */
+function PrivateTenants({ role, unitIds }: { role: string; unitIds: Set<string> }) {
+  const allowed = role === "admin" || role === "agent";
+  const tenants = TENANTS.filter((t) => t.propertyId && unitIds.has(t.propertyId)).slice(0, 6);
+
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft">
+      <div className="flex items-center gap-2">
+        <Lock className="h-4 w-4 text-primary" />
+        <h2 className="font-bold">ভাড়াটিয়ার গোপন প্রোফাইল</h2>
+      </div>
+      <p className="mt-1 text-xs text-muted-foreground">এই তথ্য শুধু অ্যাডমিন, এজেন্ট ও আইনজীবী দেখতে পান — ভাড়াটিয়া বা সাধারণ ব্যবহারকারীর জন্য নয়।</p>
+      {!allowed ? (
+        <div className="mt-4 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          দেখার অনুমতি নেই। উপরের ভূমিকা থেকে “এজেন্ট” বা “অ্যাডমিন” নির্বাচন করুন।
+        </div>
+      ) : tenants.length === 0 ? (
+        <EmptyState title="এই এলাকায় কোনো সক্রিয় ভাড়াটিয়া নেই" />
+      ) : (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {tenants.map((t) => {
+            const pvt = getTenantPrivate(t.id, role)!;
+            return (
+              <div key={t.id} className="flex gap-3 rounded-xl border border-border p-3">
+                <img src={pvt.photo} alt={`${t.name} এর ছবি`} className="h-16 w-16 shrink-0 rounded-lg object-cover" loading="lazy" />
+                <div className="min-w-0 text-sm">
+                  <div className="font-semibold">{t.name}</div>
+                  <div className="text-xs text-muted-foreground">এনআইডি: {pvt.nid} {pvt.nidVerified ? "✓ যাচাইকৃত" : "· অযাচাইকৃত"}</div>
+                  <div className="text-xs text-muted-foreground">স্থায়ী ঠিকানা: {pvt.permanentAddress}</div>
+                  <div className="text-xs text-muted-foreground">জরুরি যোগাযোগ: {pvt.emergencyContact}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">পূর্ব ইতিহাস: {pvt.history[0].property} ({pvt.history[0].from}–{pvt.history[0].to}) — {pvt.history[0].note}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
