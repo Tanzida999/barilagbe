@@ -496,3 +496,22 @@ export function mapEmbedUrl(query: string) {
 export function mapLinkUrl(query: string) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
+
+// গোপন ভাড়াটিয়া তথ্যভাণ্ডার — শুধু অ্যাডমিন/এজেন্ট/আইনজীবীর জন্য।
+export const TENANT_PRIVATE: TenantPrivate[] = TENANTS.map((t, i) => ({
+  tenantId: t.id,
+  photo: IMAGES[i % 3],
+  nid: t.nid,
+  nidVerified: i % 7 !== 0,
+  permanentAddress: `গ্রাম ${bnDigit(range(1, 60))}, ${pick(["কুমিল্লা", "বরিশাল", "রংপুর", "সিলেট", "খুলনা", "ময়মনসিংহ"])}`,
+  emergencyContact: bnDigit(makePhoneEn()),
+  history: [
+    { property: `${pick(THANAS)} এর ফ্ল্যাট`, from: "২০২২", to: "২০২৪", note: pick(["নিয়মিত ভাড়া পরিশোধ", "একবার দেরিতে পরিশোধ", "কোনো অভিযোগ নেই"]) },
+  ],
+}));
+
+export const ROLES_ALLOWED_PRIVATE = ["admin", "agent", "lawyer"] as const;
+export const getTenantPrivate = (tenantId: string, role: string) =>
+  (ROLES_ALLOWED_PRIVATE as readonly string[]).includes(role)
+    ? TENANT_PRIVATE.find((p) => p.tenantId === tenantId)
+    : undefined;
