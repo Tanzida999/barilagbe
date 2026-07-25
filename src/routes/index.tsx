@@ -31,8 +31,9 @@ const features = [
 ];
 
 const steps = [
-  { title: "মালিকের সাথে চুক্তি", desc: "বাড়ির মালিক আমাদের সাথে ব্যবস্থাপনা চুক্তি করেন।" },
-  { title: "লিস্টিং তৈরি", desc: "আমরা পেশাদার ছবি তুলে লিস্টিং প্রস্তুত করি।" },
+  { title: "এলাকার এজেন্ট নিয়োগ", desc: "প্রতিটি থানা ও মহল্লার দায়িত্বে থাকেন স্থানীয় এজেন্ট।" },
+  { title: "মালিকের সাথে চুক্তি", desc: "এজেন্ট বাসায় গিয়ে ব্যবস্থাপনা চুক্তি স্বাক্ষর করেন — লিস্টিংয়ের আগেই।" },
+  { title: "ভবন ও ইউনিট যুক্ত", desc: "ভবনের তথ্য ও ছবিসহ প্রতিটি ইউনিট (বাসা, অফিস, দোকান, গ্যারেজ) যুক্ত হয়।" },
   { title: "ভাড়াটিয়া আবেদন", desc: "আগ্রহী ভাড়াটিয়া অনলাইনে আবেদন করেন।" },
   { title: "ডকুমেন্ট যাচাই", desc: "এনআইডি, আয় ও রেফারেন্স যাচাই করা হয়।" },
   { title: "বাসা ভিজিট", desc: "আমাদের এজেন্ট বাসা দেখাতে সঙ্গে যান।" },
@@ -74,14 +75,14 @@ function Hero() {
         <div className="max-w-3xl text-primary-foreground">
           <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold backdrop-blur">
             <CheckCircle2 className="h-3.5 w-3.5 text-accent" />
-            বাংলাদেশের প্রথম সম্পূর্ণ ভাড়া ব্যবস্থাপনা প্ল্যাটফর্ম
+            নিরাপদ বাড়ি ভাড়া — নিজ এলাকার মানুষ দিয়ে আপনার বাড়ির কাজ
           </span>
           <h1 className="mt-5 text-4xl font-bold leading-[1.15] sm:text-5xl lg:text-6xl">
             শুধু বাসা খুঁজে দিই না —<br />
             <span className="text-accent">সম্পূর্ণ ভাড়া ব্যবস্থাপনা</span> আমরা করি
           </h1>
           <p className="mt-5 max-w-2xl text-base text-white/85 sm:text-lg">
-            যাচাইকৃত ভাড়াটিয়া, আইনসম্মত চুক্তি, বাসা ভিজিট, মাসিক ভাড়া সংগ্রহ ও আইনি সহায়তা।
+            নিরাপদ বাড়ি ভাড়া — নিজ এলাকার মানুষ দিয়ে আপনার বাড়ির কাজ। যাচাইকৃত ভাড়াটিয়া, আইনসম্মত চুক্তি, বাসা ভিজিট, মাসিক ভাড়া সংগ্রহ ও আইনি সহায়তা।
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/properties" className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-foreground shadow-lift transition hover:brightness-105">
@@ -194,11 +195,11 @@ function FeaturedProperties() {
 }
 
 function HowItWorks() {
-  const stepIcons = [FileSignature, Building2, UserCheck, ClipboardCheck, CalendarCheck, Scale, Wallet];
+  const stepIcons = [MapPin, FileSignature, Building2, UserCheck, ClipboardCheck, CalendarCheck, Scale, Wallet];
   return (
     <section id="how-it-works" className="bg-surface-2 py-20 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <SectionHeader eyebrow="কিভাবে কাজ করে" title="সাত ধাপে সম্পূর্ণ প্রক্রিয়া" subtitle="মালিকের সাথে চুক্তি থেকে মাসিক ভাড়া পরিচালনা — সবকিছু আমরাই করি।" />
+        <SectionHeader eyebrow="কিভাবে কাজ করে" title="আট ধাপে সম্পূর্ণ প্রক্রিয়া" subtitle="মালিকের সাথে চুক্তি থেকে মাসিক ভাড়া পরিচালনা — সবকিছু আমরাই করি।" />
         <ol className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {steps.map((s, i) => {
             const Icon = stepIcons[i];
