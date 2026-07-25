@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PROPERTIES, TENANTS, RENT_PAYMENTS, bn, getProperty } from "@/lib/mock-data";
+import { PROPERTIES, TENANTS, RENT_PAYMENTS, BUILDINGS, unitsOfBuilding, bn, getProperty } from "@/lib/mock-data";
+
 import { useAppStore } from "@/lib/store";
 import { Home, Users, Wallet, AlertCircle, CalendarCheck, TrendingUp } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
