@@ -29,6 +29,7 @@ import { Route as OwnersRegisterRouteImport } from './routes/owners.register'
 import { Route as LegalTenantIdRouteImport } from './routes/legal.$tenantId'
 import { Route as DashboardTenantRouteImport } from './routes/dashboard.tenant'
 import { Route as DashboardOwnerRouteImport } from './routes/dashboard.owner'
+import { Route as DashboardAgentRouteImport } from './routes/dashboard.agent'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as ApplyPropertyIdRouteImport } from './routes/apply.$propertyId'
 
@@ -132,6 +133,11 @@ const DashboardOwnerRoute = DashboardOwnerRouteImport.update({
   path: '/owner',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAgentRoute = DashboardAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAdminRoute = DashboardAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/agent': typeof DashboardAgentRoute
   '/dashboard/owner': typeof DashboardOwnerRoute
   '/dashboard/tenant': typeof DashboardTenantRoute
   '/legal/$tenantId': typeof LegalTenantIdRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/agent': typeof DashboardAgentRoute
   '/dashboard/owner': typeof DashboardOwnerRoute
   '/dashboard/tenant': typeof DashboardTenantRoute
   '/legal/$tenantId': typeof LegalTenantIdRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/visits': typeof VisitsRoute
   '/apply/$propertyId': typeof ApplyPropertyIdRoute
   '/dashboard/admin': typeof DashboardAdminRoute
+  '/dashboard/agent': typeof DashboardAgentRoute
   '/dashboard/owner': typeof DashboardOwnerRoute
   '/dashboard/tenant': typeof DashboardTenantRoute
   '/legal/$tenantId': typeof LegalTenantIdRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/visits'
     | '/apply/$propertyId'
     | '/dashboard/admin'
+    | '/dashboard/agent'
     | '/dashboard/owner'
     | '/dashboard/tenant'
     | '/legal/$tenantId'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/visits'
     | '/apply/$propertyId'
     | '/dashboard/admin'
+    | '/dashboard/agent'
     | '/dashboard/owner'
     | '/dashboard/tenant'
     | '/legal/$tenantId'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/visits'
     | '/apply/$propertyId'
     | '/dashboard/admin'
+    | '/dashboard/agent'
     | '/dashboard/owner'
     | '/dashboard/tenant'
     | '/legal/$tenantId'
@@ -453,6 +465,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOwnerRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/agent': {
+      id: '/dashboard/agent'
+      path: '/agent'
+      fullPath: '/dashboard/agent'
+      preLoaderRoute: typeof DashboardAgentRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/admin': {
       id: '/dashboard/admin'
       path: '/admin'
@@ -472,12 +491,14 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardAdminRoute: typeof DashboardAdminRoute
+  DashboardAgentRoute: typeof DashboardAgentRoute
   DashboardOwnerRoute: typeof DashboardOwnerRoute
   DashboardTenantRoute: typeof DashboardTenantRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
+  DashboardAgentRoute: DashboardAgentRoute,
   DashboardOwnerRoute: DashboardOwnerRoute,
   DashboardTenantRoute: DashboardTenantRoute,
 }
