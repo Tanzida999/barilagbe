@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useAppStore } from "@/lib/store";
+import { getProperty, needsAdvance, advanceAmount, bn } from "@/lib/mock-data";
 import { z } from "zod";
 
 const schema = z.object({
@@ -26,6 +27,22 @@ export function BookVisitModal({
   propertyTitle: string;
 }) {
   const addVisit = useAppStore((s) => s.addVisit);
+  const paidAdvances = useAppStore((s) => s.paidAdvances);
+  const payAdvance = useAppStore((s) => s.payAdvance);
+  const property = getProperty(propertyId);
+  const rent = property?.rent ?? 0;
+  const advanceRequired = needsAdvance(rent);
+  const advance = advanceAmount(rent);
+  const advancePaid = paidAdvances.includes(propertyId);
+  const [paying, setPaying] = useState(false);
+
+  const doPayAdvance = async () => {
+    setPaying(true);
+    await new Promise((r) => setTimeout(r, 600));
+    payAdvance(propertyId);
+    setPaying(false);
+    toast.success("অগ্রিম পরিশোধ হয়েছে", { description: `৳${bn(advance.toLocaleString("en-US"))} জমা হয়েছে।` });
+  };
   const [form, setForm] = useState({ date: "", time: "১০:০০", name: "", phone: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -36,6 +53,10 @@ export function BookVisitModal({
       const errs: Record<string, string> = {};
       res.error.issues.forEach((i) => (errs[i.path[0] as string] = i.message));
       setErrors(errs);
+      return;
+    }
+    if (advanceRequired && !advancePaid) {
+      toast.error("আগে অগ্রিম পরিশোধ করুন");
       return;
     }
     setErrors({});
@@ -62,6 +83,23 @@ export function BookVisitModal({
         <DialogHeader>
           <DialogTitle>বাসা ভিজিট বুক করুন</DialogTitle>
         </DialogHeader>
+        {advanceRequired && (
+          <div className={`rounded-xl border p-3 text-sm ${advancePaid ? "border-secondary/40 bg-secondary/10" : "border-accent/40 bg-accent/10"}`}>
+            {advancePaid ? (
+              <span className="font-semibold text-secondary">অগ্রিম পরিশোধিত ✓ এখন ভিজিট নিশ্চিত করুন।</span>
+            ) : (
+              <>
+                <p className="font-semibold">এই ইউনিটে ভিজিটের আগে অগ্রিম দিতে হবে</p>
+                <p className="mt-1 text-muted-foreground">
+                  ভাড়া ৳{bn(rent.toLocaleString("en-US"))} — ৳১৫,০০০ এর কম হওয়ায় ৳{bn(advance.toLocaleString("en-US"))} অগ্রিম প্রযোজ্য (ভাড়া নিলে সমন্বয় হবে)।
+                </p>
+                <Button size="sm" className="mt-2" onClick={doPayAdvance} disabled={paying}>
+                  {paying ? "প্রক্রিয়াধীন..." : `৳${bn(advance.toLocaleString("en-US"))} অগ্রিম দিন`}
+                </Button>
+              </>
+            )}
+          </div>
+        )}
         <div className="grid gap-3">
           <div>
             <Label>তারিখ</Label>
@@ -93,7 +131,7 @@ export function BookVisitModal({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>বাতিল</Button>
-          <Button onClick={submit} disabled={loading}>
+          <Button onClick={submit} disabled={loading || (advanceRequired && !advancePaid)}>
             {loading ? "প্রক্রিয়াধীন..." : "নিশ্চিত করুন"}
           </Button>
         </DialogFooter>

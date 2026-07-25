@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VisitsRouteImport } from './routes/visits'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as RightsRouteImport } from './routes/rights'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PropertiesRouteImport } from './routes/properties'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -46,6 +47,11 @@ const TermsRoute = TermsRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RightsRoute = RightsRouteImport.update({
+  id: '/rights',
+  path: '/rights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -162,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
+  '/rights': typeof RightsRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/visits': typeof VisitsRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
+  '/rights': typeof RightsRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/visits': typeof VisitsRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/properties': typeof PropertiesRouteWithChildren
   '/register': typeof RegisterRoute
+  '/rights': typeof RightsRoute
   '/services': typeof ServicesRoute
   '/terms': typeof TermsRoute
   '/visits': typeof VisitsRoute
@@ -240,6 +249,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/properties'
     | '/register'
+    | '/rights'
     | '/services'
     | '/terms'
     | '/visits'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/properties'
     | '/register'
+    | '/rights'
     | '/services'
     | '/terms'
     | '/visits'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/properties'
     | '/register'
+    | '/rights'
     | '/services'
     | '/terms'
     | '/visits'
@@ -316,6 +328,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   PropertiesRoute: typeof PropertiesRouteWithChildren
   RegisterRoute: typeof RegisterRoute
+  RightsRoute: typeof RightsRoute
   ServicesRoute: typeof ServicesRoute
   TermsRoute: typeof TermsRoute
   VisitsRoute: typeof VisitsRoute
@@ -344,6 +357,13 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rights': {
+      id: '/rights'
+      path: '/rights'
+      fullPath: '/rights'
+      preLoaderRoute: typeof RightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -543,6 +563,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   PropertiesRoute: PropertiesRouteWithChildren,
   RegisterRoute: RegisterRoute,
+  RightsRoute: RightsRoute,
   ServicesRoute: ServicesRoute,
   TermsRoute: TermsRoute,
   VisitsRoute: VisitsRoute,
