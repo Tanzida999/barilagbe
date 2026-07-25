@@ -34,7 +34,13 @@ export const THANA_DATA: ThanaInfo[] = [
 export const THANAS = THANA_DATA.map((t) => t.name);
 export const AREAS_BY_THANA: Record<string, string[]> = Object.fromEntries(THANA_DATA.map((t) => [t.name, t.areas]));
 export const AREAS = THANA_DATA.flatMap((t) => t.areas);
-export const PROPERTY_TYPES = ["ফ্ল্যাট", "বাড়ি", "অফিস", "দোকান"] as const;
+export const PROPERTY_TYPES = ["ফ্ল্যাট", "বাড়ি", "অফিস", "দোকান", "গ্যারেজ"] as const;
+
+// ভিজিট বুকিংয়ে অগ্রিম লাগবে কিনা — কম ভাড়ার ইউনিটে অগ্রিম বাধ্যতামূলক।
+export const ADVANCE_THRESHOLD = 15000;
+export const advanceAmount = (rent: number) => Math.max(500, Math.round((rent * 0.1) / 100) * 100);
+export const needsAdvance = (rent: number) => rent < ADVANCE_THRESHOLD;
+
 
 export type PropertyType = typeof PROPERTY_TYPES[number];
 
