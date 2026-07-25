@@ -27,6 +27,9 @@ const searchSchema = z.object({
   minRent: fallback(z.number(), 0).default(0),
   maxRent: fallback(z.number(), 0).default(0),
   minSqft: fallback(z.number(), 0).default(0),
+  floor: fallback(z.number(), -1).default(-1),
+  rooms: fallback(z.number(), 0).default(0),
+  maxRoadDistance: fallback(z.number(), 0).default(0),
   parking: fallback(z.boolean(), false).default(false),
   verified: fallback(z.boolean(), false).default(false),
   available: fallback(z.boolean(), false).default(false),
@@ -93,6 +96,9 @@ function SearchPage() {
       if (params.minRent && p.rent < params.minRent) return false;
       if (params.maxRent && p.rent > params.maxRent) return false;
       if (params.minSqft && p.sqft < params.minSqft) return false;
+      if (params.floor >= 0 && p.floor !== params.floor) return false;
+      if (params.rooms && p.bedrooms + p.bathrooms < params.rooms) return false;
+      if (params.maxRoadDistance && p.roadDistance > params.maxRoadDistance) return false;
       if (params.parking && !p.parking) return false;
       if (params.verified && !p.verified) return false;
       if (params.available && !p.available) return false;
@@ -162,6 +168,27 @@ function SearchPage() {
                 <Select label="সম্পত্তির ধরন" value={params.type} onChange={(v) => set({ type: v })} options={["", ...PROPERTY_TYPES]} />
                 <NumSelect label="বেডরুম (কমপক্ষে)" value={params.bedrooms} onChange={(v) => set({ bedrooms: v })} options={[0, 1, 2, 3, 4]} />
                 <NumSelect label="বাথরুম (কমপক্ষে)" value={params.bathrooms} onChange={(v) => set({ bathrooms: v })} options={[0, 1, 2, 3]} />
+                <NumSelect label="মোট রুম (কমপক্ষে)" value={params.rooms} onChange={(v) => set({ rooms: v })} options={[0, 2, 3, 4, 5, 6]} />
+                <label className="block">
+                  <span className="text-xs font-semibold text-muted-foreground">তলা</span>
+                  <select
+                    value={params.floor}
+                    onChange={(e) => set({ floor: Number(e.target.value) })}
+                    className="mt-1 h-10 w-full rounded-lg border border-input bg-surface px-2 text-sm"
+                  >
+                    <option value={-1}>যেকোনো</option>
+                    <option value={0}>নিচতলা</option>
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((f) => (
+                      <option key={f} value={f}>{bn(f)} তলা</option>
+                    ))}
+                  </select>
+                </label>
+                <div>
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    প্রধান সড়ক থেকে সর্বোচ্চ দূরত্ব: {bn(params.maxRoadDistance || 800)} মিটার
+                  </label>
+                  <input type="range" min={50} max={800} step={50} value={params.maxRoadDistance || 800} onChange={(e) => set({ maxRoadDistance: Number(e.target.value) })} className="mt-2 w-full accent-primary" />
+                </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground">সর্বোচ্চ ভাড়া: ৳{bn((params.maxRent || 60000).toLocaleString("en-US"))}</label>
                   <input type="range" min={0} max={60000} step={1000} value={params.maxRent || 60000} onChange={(e) => set({ maxRent: Number(e.target.value) })} className="mt-2 w-full accent-primary" />
