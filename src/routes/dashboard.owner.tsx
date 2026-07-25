@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { PROPERTIES, TENANTS, RENT_PAYMENTS, bn, getProperty } from "@/lib/mock-data";
+import { PROPERTIES, TENANTS, RENT_PAYMENTS, BUILDINGS, unitsOfBuilding, bn, getProperty } from "@/lib/mock-data";
+
 import { useAppStore } from "@/lib/store";
 import { Home, Users, Wallet, AlertCircle, CalendarCheck, TrendingUp } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
@@ -29,8 +30,23 @@ function OwnerDash() {
     { icon: CalendarCheck, label: "ভিজিট রিকোয়েস্ট", value: bn(visitReq), tone: "secondary" },
   ];
 
+  const myBuildings = BUILDINGS.filter((b) => b.ownerId === ownerId).map((b) => {
+    const units = unitsOfBuilding(b.id);
+    const rentedUnits = units.filter((u) => !u.available);
+    const vacantUnits = units.filter((u) => u.available);
+    return {
+      ...b,
+      total: units.length,
+      rented: rentedUnits.length,
+      vacant: vacantUnits.length,
+      income: rentedUnits.reduce((s, u) => s + u.rent, 0),
+      loss: vacantUnits.reduce((s, u) => s + u.rent, 0),
+    };
+  });
+
   const months = ["জানু", "ফেব্রু", "মার্চ", "এপ্রি", "মে", "জুন", "জুল"];
   const chart = [12, 18, 22, 25, 30, 28, 35];
+
 
   return (
     <div className="space-y-6">
@@ -47,6 +63,43 @@ function OwnerDash() {
 
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft">
         <div className="flex items-center justify-between">
+          <h2 className="font-bold">ভবনভিত্তিক আয় ও ক্ষতি</h2>
+          <TrendingUp className="h-5 w-5 text-primary" />
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          <span className="mr-3"><span className="mr-1 inline-block h-2 w-2 rounded-full bg-secondary" />আদায় হওয়া ভাড়া</span>
+          <span><span className="mr-1 inline-block h-2 w-2 rounded-full bg-destructive" />ফাঁকা ইউনিটের ক্ষতি</span>
+        </p>
+        {myBuildings.length === 0 ? <EmptyState title="কোনো ভবন নেই" /> : (
+          <div className="mt-5 space-y-4">
+            {myBuildings.map((b) => {
+              const max = Math.max(1, ...myBuildings.map((x) => x.income + x.loss));
+              return (
+                <div key={b.id}>
+                  <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                    <span className="font-semibold">{b.name} <span className="text-xs font-normal text-muted-foreground">— {b.area}, {b.thana}</span></span>
+                    <span className="text-xs">
+                      <span className="text-secondary">আয় ৳{bn(b.income.toLocaleString("en-US"))}</span>
+                      <span className="mx-1 text-muted-foreground">/</span>
+                      <span className="text-destructive">ক্ষতি ৳{bn(b.loss.toLocaleString("en-US"))}</span>
+                    </span>
+                  </div>
+                  <div className="mt-1.5 flex h-4 overflow-hidden rounded-full bg-muted">
+                    <div className="bg-secondary transition-all" style={{ width: `${(b.income / max) * 100}%` }} title="আদায়" />
+                    <div className="bg-destructive/70 transition-all" style={{ width: `${(b.loss / max) * 100}%` }} title="ক্ষতি" />
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    ইউনিট {bn(b.total)} · ভাড়া হয়েছে {bn(b.rented)} · ফাঁকা {bn(b.vacant)} · {bn(b.floors)} তলা
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft">
+        <div className="flex items-center justify-between">
           <h2 className="font-bold">মাসিক আয় (৭ মাস)</h2>
           <TrendingUp className="h-5 w-5 text-primary" />
         </div>
@@ -59,6 +112,7 @@ function OwnerDash() {
           ))}
         </div>
       </div>
+
 
       <div className="rounded-2xl border border-border bg-surface p-6 shadow-soft">
         <div className="flex items-center justify-between">
