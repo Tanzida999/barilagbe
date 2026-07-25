@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { PageShell, Crumbs } from "@/components/site-chrome";
 import { BookVisitModal } from "@/components/book-visit-modal";
 import { PropertyMap } from "@/components/property-map";
-import { getProperty, getOwner, bn, mapLinkUrl } from "@/lib/mock-data";
+import { getProperty, getOwner, getBuilding, getAgent, unitsOfBuilding, bn, mapLinkUrl } from "@/lib/mock-data";
 import { useAppStore } from "@/lib/store";
 import { useState } from "react";
 import {
