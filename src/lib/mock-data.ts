@@ -266,48 +266,129 @@ export const OWNERS: Owner[] = Array.from({ length: 20 }, (_, i) => {
   };
 });
 
-export const PROPERTIES: Property[] = Array.from({ length: 50 }, (_, i) => {
-  const thanaInfo = THANA_DATA[i % THANA_DATA.length];
-  const thana = thanaInfo.name;
-  const area = thanaInfo.areas[i % thanaInfo.areas.length];
-  const type = pick(PROPERTY_TYPES);
-  const bedrooms = type === "দোকান" ? 0 : range(1, 4);
-  const bathrooms = type === "দোকান" ? 1 : Math.max(1, bedrooms - range(0, 1));
-  const rent = range(8, 60) * 1000;
-  const sqft = range(500, 2200);
-  const ownerId = OWNERS[i % OWNERS.length].id;
-  const houseNo = range(1, 120);
-  OWNERS[i % OWNERS.length].propertyIds.push(`prop-${i + 1}`);
-  const jitter = () => (rand() - 0.5) * 0.012;
+// এক থানায় একজন এজেন্ট — নিজ এলাকার মানুষ।
+export const AGENTS: Agent[] = THANA_DATA.map((t, i) => {
+  const en = makePhoneEn();
   return {
-    id: `prop-${i + 1}`,
-    title: `${bnDigit(bedrooms)} বেডরুম ${type} — ${area}, ${thana}`,
-    type,
-    division: "ঢাকা",
-    district: "ঢাকা",
-    thana,
-    area,
-    address: `বাড়ি ${bnDigit(houseNo)}, ${area}, ${thana}, ঢাকা`,
-    rent,
-    bedrooms,
-    bathrooms,
-    sqft,
-    parking: rand() > 0.4,
-    verified: rand() > 0.15,
-    available: rand() > 0.25,
-    featured: i < 8,
-    popularity: range(10, 500),
-    createdAt: new Date(2025, range(0, 11), range(1, 28)).toISOString(),
-    availableFrom: new Date(2026, range(0, 6), range(1, 28)).toISOString(),
-    ownerId,
-    images: [IMAGES[i % 3], IMAGES[(i + 1) % 3], IMAGES[(i + 2) % 3]],
-    amenities: AMENITIES.filter(() => rand() > 0.4).slice(0, 6),
-    rules: RULES.filter(() => rand() > 0.5).slice(0, 3),
-    description: `${area}, ${thana} এর প্রাণকেন্দ্রে অবস্থিত সুন্দর ও পরিপাটি ${type}। প্রশস্ত রুম, ভালো আলো-বাতাস, নিরাপদ পরিবেশ। স্কুল, বাজার ও হাসপাতাল কাছে।`,
-    lat: thanaInfo.lat + jitter(),
-    lng: thanaInfo.lng + jitter(),
+    id: `agt-${i + 1}`,
+    name: pick([...NAMES_M, ...NAMES_F]),
+    phone: bnDigit(en),
+    phoneEn: en,
+    thana: t.name,
+    mohallas: t.areas,
+    lat: t.lat,
+    lng: t.lng,
+    joinedAt: new Date(2024, range(0, 11), range(1, 28)).toISOString(),
+    commissionRate: pick([5, 6, 7, 8]),
   };
 });
+
+export const getAgentByThana = (thana: string) => AGENTS.find((a) => a.thana === thana);
+
+const BUILDING_NAME_SUFFIX = ["ভিলা", "টাওয়ার", "ভবন", "নিবাস", "প্লাজা", "হাউজ", "কমপ্লেক্স", "মঞ্জিল"];
+const UNIT_KINDS = ["ফ্ল্যাট", "বাড়ি", "অফিস", "দোকান", "গ্যারেজ"] as const;
+
+export const BUILDINGS: Building[] = [];
+export const PROPERTIES: Property[] = [];
+
+// প্রতিটি ভবনে একাধিক ভাড়াযোগ্য ইউনিট — বাসা/ফ্ল্যাট, অফিস, গ্যারেজ, দোকান।
+{
+  let unitCounter = 0;
+  const BUILDING_COUNT = 24;
+  for (let b = 0; b < BUILDING_COUNT; b++) {
+    const thanaInfo = THANA_DATA[b % THANA_DATA.length];
+    const thana = thanaInfo.name;
+    const area = thanaInfo.areas[b % thanaInfo.areas.length];
+    const agent = AGENTS[b % AGENTS.length];
+    const owner = OWNERS[b % OWNERS.length];
+    const jitter = () => (rand() - 0.5) * 0.012;
+    const houseNo = range(1, 120);
+    const floors = range(3, 8);
+    const buildingId = `bld-${b + 1}`;
+    const bLat = thanaInfo.lat + jitter();
+    const bLng = thanaInfo.lng + jitter();
+    const buildingName = `${pick(["শান্তি", "নূর", "রহমান", "মায়া", "সবুজ", "আলো", "মেঘনা", "পদ্মা"])} ${pick(BUILDING_NAME_SUFFIX)}`;
+    const address = `বাড়ি ${bnDigit(houseNo)}, ${area}, ${thana}, ঢাকা`;
+    const roadDistance = range(30, 800);
+    const unitIds: string[] = [];
+
+    const unitCount = b < 2 ? 3 : range(2, 4);
+    for (let u = 0; u < unitCount && unitCounter < 60; u++) {
+      unitCounter++;
+      const i = unitCounter - 1;
+      const type = u === 0 ? "ফ্ল্যাট" : pick(UNIT_KINDS);
+      const isResidential = type === "ফ্ল্যাট" || type === "বাড়ি";
+      const bedrooms = isResidential ? range(1, 4) : 0;
+      const bathrooms = isResidential ? Math.max(1, bedrooms - range(0, 1)) : 1;
+      const rent = type === "গ্যারেজ" ? range(3, 8) * 1000 : type === "দোকান" ? range(9, 25) * 1000 : range(8, 60) * 1000;
+      const sqft = type === "গ্যারেজ" ? range(120, 300) : range(400, 2200);
+      const floor = type === "দোকান" || type === "গ্যারেজ" ? 0 : range(1, floors);
+      const id = `prop-${unitCounter}`;
+      unitIds.push(id);
+      owner.propertyIds.push(id);
+      PROPERTIES.push({
+        id,
+        title: isResidential
+          ? `${bnDigit(bedrooms)} বেডরুম ${type} — ${buildingName}, ${area}`
+          : `${type} — ${buildingName}, ${area}`,
+        type,
+        division: "ঢাকা",
+        district: "ঢাকা",
+        thana,
+        area,
+        address: `${buildingName}, ${address}`,
+        rent,
+        bedrooms,
+        bathrooms,
+        sqft,
+        parking: rand() > 0.4,
+        verified: rand() > 0.15,
+        available: rand() > 0.35,
+        featured: i < 8,
+        popularity: range(10, 500),
+        createdAt: new Date(2025, range(0, 11), range(1, 28)).toISOString(),
+        availableFrom: new Date(2026, range(0, 6), range(1, 28)).toISOString(),
+        ownerId: owner.id,
+        images: [IMAGES[i % 3], IMAGES[(i + 1) % 3], IMAGES[(i + 2) % 3]],
+        amenities: AMENITIES.filter(() => rand() > 0.4).slice(0, 6),
+        rules: RULES.filter(() => rand() > 0.5).slice(0, 3),
+        description: `${area}, ${thana} এর ${buildingName} ভবনে অবস্থিত ${type}। প্রধান সড়ক থেকে ${bnDigit(roadDistance)} মিটার। স্কুল, বাজার ও হাসপাতাল কাছে।`,
+        lat: bLat,
+        lng: bLng,
+        buildingId,
+        floor,
+        roadDistance,
+        agentId: agent.id,
+      });
+    }
+
+    BUILDINGS.push({
+      id: buildingId,
+      name: buildingName,
+      address,
+      thana,
+      area,
+      lat: bLat,
+      lng: bLng,
+      ownerId: owner.id,
+      agentId: agent.id,
+      floors,
+      yearBuilt: range(1998, 2024),
+      agreementSignedAt: new Date(2025, range(0, 11), range(1, 28)).toISOString(),
+      unitIds,
+    });
+  }
+}
+
+export const getBuilding = (id: string) => BUILDINGS.find((b) => b.id === id);
+export const getAgent = (id: string) => AGENTS.find((a) => a.id === id);
+export const unitsOfBuilding = (id: string) => PROPERTIES.filter((p) => p.buildingId === id);
+export const buildingSummary = (id: string): BuildingUnitSummary => {
+  const units = unitsOfBuilding(id);
+  const vacant = units.filter((u) => u.available).length;
+  return { total: units.length, rented: units.length - vacant, vacant };
+};
+
 
 export const TENANTS: Tenant[] = Array.from({ length: 100 }, (_, i) => {
   const propertyId = i < 60 ? PROPERTIES[i % PROPERTIES.length].id : undefined;
