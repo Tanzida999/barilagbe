@@ -96,6 +96,29 @@ function PropertyDetail() {
                 <Stat icon={Bath} label="বাথরুম" value={`${bn(p.bathrooms)} টি`} />
                 <Stat icon={Ruler} label="আকার" value={`${bn(p.sqft)} sqft`} />
               </div>
+              <div className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+                <Stat icon={Ruler} label="তলা" value={p.floor === 0 ? "নিচতলা" : `${bn(p.floor)} তলা`} />
+                <Stat icon={Ruler} label="প্রধান সড়ক থেকে" value={`${bn(p.roadDistance)} মিটার`} />
+                <Stat icon={Ruler} label="ভবন" value={getBuilding(p.buildingId)?.name ?? "—"} />
+              </div>
+              {(() => {
+                const b = getBuilding(p.buildingId);
+                if (!b) return null;
+                const others = unitsOfBuilding(b.id).filter((u) => u.id !== p.id);
+                return (
+                  <div className="mt-5 rounded-xl border border-border p-4">
+                    <div className="text-sm font-semibold">{b.name} — এই ভবনের অন্যান্য ইউনিট</div>
+                    <div className="text-xs text-muted-foreground">{bn(b.floors)} তলা · মোট {bn(b.unitIds.length)} ইউনিট · এলাকার এজেন্ট: {getAgent(b.agentId)?.name}</div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {others.length === 0 ? <span className="text-xs text-muted-foreground">অন্য কোনো ইউনিট নেই</span> : others.map((u) => (
+                        <Link key={u.id} to="/properties/$id" params={{ id: u.id }} className="rounded-lg border border-border px-3 py-1.5 text-xs hover:border-primary hover:text-primary">
+                          {u.type} · {u.floor === 0 ? "নিচতলা" : `${bn(u.floor)} তলা`} · ৳{bn(u.rent.toLocaleString("en-US"))} {u.available ? "" : "(ভাড়া হয়েছে)"}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
               <div className="mt-3 text-xs text-muted-foreground">উপলব্ধ: {new Date(p.availableFrom).toLocaleDateString("bn-BD")}</div>
             </div>
