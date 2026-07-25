@@ -8,6 +8,7 @@ const links = [
   { to: "/properties", label: "বাসা খুঁজুন" },
   { to: "/owners", label: "বাড়ির মালিক" },
   { to: "/services", label: "সেবা" },
+  { to: "/rights", label: "আইন ও অধিকার" },
   { to: "/about", label: "আমাদের সম্পর্কে" },
   { to: "/faq", label: "FAQ" },
   { to: "/contact", label: "যোগাযোগ" },
@@ -21,7 +22,7 @@ export function SiteNav() {
   const navigate = useNavigate();
 
   const dashboardTo =
-    role === "owner" ? "/dashboard/owner" : role === "admin" ? "/dashboard/admin" : "/dashboard/tenant";
+    role === "owner" ? "/dashboard/owner" : role === "agent" ? "/dashboard/agent" : role === "admin" ? "/dashboard/admin" : "/dashboard/tenant";
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-surface/85 backdrop-blur-md">
@@ -74,6 +75,7 @@ export function SiteNav() {
               >
                 <option value="tenant">ভাড়াটিয়া</option>
                 <option value="owner">মালিক</option>
+                <option value="agent">এজেন্ট</option>
                 <option value="admin">অ্যাডমিন</option>
               </select>
               <button
@@ -193,6 +195,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/properties" className="hover:text-primary">বাসা খুঁজুন</Link></li>
             <li><Link to="/owners/register" className="hover:text-primary">মালিক নিবন্ধন</Link></li>
+            <li><Link to="/rights" className="hover:text-primary">মালিক ও ভাড়াটিয়ার অধিকার</Link></li>
             <li><Link to="/privacy" className="hover:text-primary">গোপনীয়তা</Link></li>
             <li><Link to="/terms" className="hover:text-primary">শর্তাবলী</Link></li>
           </ul>

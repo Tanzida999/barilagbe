@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import type { Application, Notification, Visit } from "./mock-data";
 import { NOTIFICATIONS } from "./mock-data";
 
-export type Role = "guest" | "tenant" | "owner" | "admin";
+export type Role = "guest" | "tenant" | "owner" | "agent" | "admin";
 
 interface AppState {
   role: Role;
@@ -23,6 +23,10 @@ interface AppState {
 
   applications: Application[];
   addApplication: (a: Application) => void;
+
+  /** কম ভাড়ার ইউনিটে ভিজিটের আগে অগ্রিম পরিশোধ */
+  paidAdvances: string[];
+  payAdvance: (propertyId: string) => void;
 
   notifications: Notification[];
   markRead: (id: string) => void;
@@ -65,6 +69,14 @@ export const useAppStore = create<AppState>()(
 
       applications: [],
       addApplication: (a) => set((s) => ({ applications: [a, ...s.applications] })),
+
+      paidAdvances: [],
+      payAdvance: (propertyId) =>
+        set((s) => ({
+          paidAdvances: s.paidAdvances.includes(propertyId)
+            ? s.paidAdvances
+            : [...s.paidAdvances, propertyId],
+        })),
 
       notifications: NOTIFICATIONS,
       markRead: (id) =>

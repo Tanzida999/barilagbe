@@ -17,13 +17,18 @@ function DashboardShell() {
 
   useEffect(() => {
     if (pathname === "/dashboard") {
-      const to = role === "owner" ? "/dashboard/owner" : role === "admin" ? "/dashboard/admin" : "/dashboard/tenant";
+      const to = role === "owner" ? "/dashboard/owner" : role === "agent" ? "/dashboard/agent" : role === "admin" ? "/dashboard/admin" : "/dashboard/tenant";
       navigate({ to, replace: true });
     }
   }, [pathname, role]);
 
   const items = role === "admin" ? [
     { to: "/dashboard/admin", label: "সংক্ষিপ্ত", icon: LayoutDashboard },
+    { to: "/visits", label: "ভিজিট", icon: CalendarCheck },
+    { to: "/notifications", label: "নোটিফিকেশন", icon: Bell },
+    { to: "/profile", label: "প্রোফাইল", icon: Settings },
+  ] : role === "agent" ? [
+    { to: "/dashboard/agent", label: "সংক্ষিপ্ত", icon: LayoutDashboard },
     { to: "/visits", label: "ভিজিট", icon: CalendarCheck },
     { to: "/notifications", label: "নোটিফিকেশন", icon: Bell },
     { to: "/profile", label: "প্রোফাইল", icon: Settings },
