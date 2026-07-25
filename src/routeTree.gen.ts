@@ -20,9 +20,11 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OwnersRouteImport } from './routes/owners'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as LawyerRouteImport } from './routes/lawyer'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as AgentRouteImport } from './routes/agent'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
@@ -89,6 +91,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LawyerRoute = LawyerRouteImport.update({
+  id: '/lawyer',
+  path: '/lawyer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FaqRoute = FaqRouteImport.update({
   id: '/faq',
   path: '/faq',
@@ -102,6 +109,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentRoute = AgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -158,9 +170,11 @@ const ApplyPropertyIdRoute = ApplyPropertyIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/agent': typeof AgentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/faq': typeof FaqRoute
+  '/lawyer': typeof LawyerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
@@ -184,9 +198,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/agent': typeof AgentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/faq': typeof FaqRoute
+  '/lawyer': typeof LawyerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
@@ -211,9 +227,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/agent': typeof AgentRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/faq': typeof FaqRoute
+  '/lawyer': typeof LawyerRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/owners': typeof OwnersRouteWithChildren
@@ -239,9 +257,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/faq'
+    | '/lawyer'
     | '/login'
     | '/notifications'
     | '/owners'
@@ -265,9 +285,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/faq'
+    | '/lawyer'
     | '/login'
     | '/notifications'
     | '/owners'
@@ -291,9 +313,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/agent'
     | '/contact'
     | '/dashboard'
     | '/faq'
+    | '/lawyer'
     | '/login'
     | '/notifications'
     | '/owners'
@@ -318,9 +342,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AgentRoute: typeof AgentRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
   FaqRoute: typeof FaqRoute
+  LawyerRoute: typeof LawyerRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   OwnersRoute: typeof OwnersRouteWithChildren
@@ -415,6 +441,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lawyer': {
+      id: '/lawyer'
+      path: '/lawyer'
+      fullPath: '/lawyer'
+      preLoaderRoute: typeof LawyerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/faq': {
       id: '/faq'
       path: '/faq'
@@ -434,6 +467,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agent': {
+      id: '/agent'
+      path: '/agent'
+      fullPath: '/agent'
+      preLoaderRoute: typeof AgentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -553,9 +593,11 @@ const PropertiesRouteWithChildren = PropertiesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AgentRoute: AgentRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
   FaqRoute: FaqRoute,
+  LawyerRoute: LawyerRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   OwnersRoute: OwnersRouteWithChildren,
