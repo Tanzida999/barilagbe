@@ -71,7 +71,66 @@ export interface Property {
   description: string;
   lat: number;
   lng: number;
+  /** যে ভবনের অংশ */
+  buildingId: string;
+  /** কত তলা */
+  floor: number;
+  /** প্রধান সড়ক থেকে দূরত্ব (মিটার) */
+  roadDistance: number;
+  /** এলাকার দায়িত্বপ্রাপ্ত এজেন্ট */
+  agentId: string;
 }
+
+export interface BuildingUnitSummary {
+  total: number;
+  rented: number;
+  vacant: number;
+}
+
+export interface Building {
+  id: string;
+  name: string;
+  address: string;
+  thana: string;
+  area: string;
+  lat: number;
+  lng: number;
+  ownerId: string;
+  agentId: string;
+  floors: number;
+  yearBuilt: number;
+  /** মালিকের সাথে ব্যবস্থাপনা চুক্তির তারিখ (লিস্টিং তৈরির আগেই) */
+  agreementSignedAt: string;
+  unitIds: string[];
+}
+
+export interface Agent {
+  id: string;
+  name: string;
+  phone: string;
+  phoneEn: string;
+  /** দায়িত্বপ্রাপ্ত থানা */
+  thana: string;
+  /** দায়িত্বপ্রাপ্ত মহল্লা */
+  mohallas: string[];
+  lat: number;
+  lng: number;
+  joinedAt: string;
+  /** প্রতি সফল ভাড়ায় কমিশন (%) */
+  commissionRate: number;
+}
+
+/** গোপন ভাড়াটিয়া প্রোফাইল — শুধু অ্যাডমিন, এজেন্ট ও আইনজীবী দেখতে পাবেন। */
+export interface TenantPrivate {
+  tenantId: string;
+  photo: string;
+  nid: string;
+  nidVerified: boolean;
+  permanentAddress: string;
+  emergencyContact: string;
+  history: { property: string; from: string; to: string; note: string }[];
+}
+
 
 export interface Owner {
   id: string;
